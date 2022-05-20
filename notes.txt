@@ -3,3 +3,8 @@ David 05/19:
 - placed two boxes and stage
 - boxes change color upon clicking keys x for box 1 and k for box 2
 - counters keep track of amount of times boxes are clicked (for calculating how fast they should go later on) 
+
+Lucas 5/20
+-Added Constructor to store changes to boxes
+-Changed display to display matrices initialized in constructor 
+-simplfied draw_box function
