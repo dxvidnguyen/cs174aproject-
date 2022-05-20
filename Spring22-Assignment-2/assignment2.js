@@ -149,7 +149,7 @@ export class Assignment2 extends Base_Scene {
         });
     }
 
-    draw_box(context, program_state, model_transform, box_index) {
+    draw_box(context, program_state, model_transform, box_color) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
         // Hint:  You can add more parameters for this function, like the desired color, index of the box, etc.
@@ -184,8 +184,10 @@ export class Assignment2 extends Base_Scene {
 
         */
 
-        const box_color = this.colors[box_index];
+       // const box_color = this.colors[box_index];
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:box_color}));
 
+        /*
         //first box
         if (box_index == 0){
             const blue = hex_color("#1a9ffa");
@@ -204,6 +206,8 @@ export class Assignment2 extends Base_Scene {
             const brown = hex_color("#D2B48C");
             this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:brown}));
         }
+
+        */
 
         return model_transform;
     }
@@ -228,11 +232,14 @@ export class Assignment2 extends Base_Scene {
         model_transform = this.draw_box(context, program_state, model_transform, 1);
         model_transform = this.draw_box(context, program_state, model_transform, 2);
         */
+            const brown = hex_color("#D2B48C");
+        
 
+        
 
-        box1_transform = this.draw_box(context, program_state, box1_transform, 0);
-        box2_transform = this.draw_box(context, program_state, box2_transform, 1);
-        stage_transform = this.draw_box(context, program_state, stage_transform, 2);
+        box1_transform = this.draw_box(context, program_state, box1_transform, this.colors[0]);
+        box2_transform = this.draw_box(context, program_state, box2_transform, this.colors[1]);
+        stage_transform = this.draw_box(context, program_state, stage_transform, brown);
 
         console.log("box 1 counter: ", this.b1_counter);
         console.log("box 2 counter: ", this.b2_counter);
