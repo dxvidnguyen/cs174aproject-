@@ -71,14 +71,6 @@ class Base_Scene extends Scene {
         this.b1_counter = 0;
         this.b2_counter = 0;
         //Position Matrices to move boxes
-        const data_members = {
-                roll: 0, did_b1_move: false, b1_move: 0,
-                b1: Mat4.identity(), 
-                b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
-                platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
-               // radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
-            };
-        Object.assign(this, data_members);
     }
 
     display(context, program_state) {
@@ -107,6 +99,22 @@ export class Assignment2 extends Base_Scene {
      * This gives you a very small code sandbox for editing a simple scene, and for
      * experimenting with matrix transformations.
      */
+    constructor()
+    {
+        super();
+        const data_members = {
+                roll: 0, did_b1_move: false, b1_move: 0,
+                b1: Mat4.identity(), 
+                b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
+                platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
+               // radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
+            };
+        Object.assign(this, data_members);
+    }
+
+
+
+    
     set_colors() {
         // TODO:  Create a class member variable to store your cube's colors.
         // Hint:  You might need to create a member variable at somewhere to store the colors, using `this`.
