@@ -9,3 +9,4 @@ Lucas 5/20
 -Changed display to display matrices initialized in constructor 
 -simplfied draw_box function
 -Box 1 move, kinda, yeah, now i sleep
+-Also, I dont know how to use github, so sorry i mess things up, I simply updated just the assignment2 file and this one
