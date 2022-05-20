@@ -108,10 +108,38 @@ export class Assignment2 extends Base_Scene {
         });
     }
 
-    draw_box(context, program_state, model_transform) {
+    draw_box(context, program_state, model_transform, box_index) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
         // Hint:  You can add more parameters for this function, like the desired color, index of the box, etc.
+
+        /*
+        const blue = hex_color("#1a9ffa");
+        model_transform = model_transform.times(Mat4.translation(0,0,0);
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+         */
+
+        //first box
+        if (box_index == 0){
+            const blue = hex_color("#1a9ffa");
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        }
+
+
+        //second box
+        if(box_index == 1){
+            const red = hex_color("#FF0000");
+            model_transform = model_transform.times(Mat4.translation(-20,0 ,0 ));
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:red}));
+        }
+
+        //stage
+        if(box_index == 2){
+            const brown = hex_color("#D2B48C");
+            model_transform = model_transform.times(Mat4.translation(10,-2 ,0 ))
+                .times(Mat4.scale(20, 1, 20));
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:brown}));
+        }
 
         return model_transform;
     }
@@ -122,7 +150,17 @@ export class Assignment2 extends Base_Scene {
         let model_transform = Mat4.identity();
 
         // Example for drawing a cube, you can remove this line if needed
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        // this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+
+        //model_transform = this.draw_box(context, program_state, model_transform, 1);
+
+        model_transform = this.draw_box(context, program_state, model_transform, 0)
+        model_transform = this.draw_box(context, program_state, model_transform, 1)
+        model_transform = this.draw_box(context, program_state, model_transform, 2)
+
+
+
+
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
     }
 }
