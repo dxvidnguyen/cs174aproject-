@@ -72,7 +72,7 @@ class Base_Scene extends Scene {
         this.b2_counter = 0;
         //Position Matrices to move boxes
         const data_members = {
-                roll: 0, I_move: 0,
+                roll: 0, did_b1_move: false, b1_move: 0,
                 b1: Mat4.identity(), 
                 b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
                 platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
@@ -135,7 +135,8 @@ export class Assignment2 extends Base_Scene {
             this.b1_counter++;
         });
         //Moving Box 1
-        this.key_triggered_button("Box 1, Move North", ["u"], () => this.I_move = 1);
+        this.key_triggered_button("Box 1, Move Forward", ["u"], () => {this.b1_move = -1; this.did_b1_move = true;});
+        this.key_triggered_button("Box 1, Move Backward", ["j"], () => {this.b1_move = 1; this.did_b1_move = true;});
 
 
 
@@ -185,6 +186,7 @@ export class Assignment2 extends Base_Scene {
         */
 
        // const box_color = this.colors[box_index];
+        //model_transform = model_transform.times(Mat4.translation(this.I_move));
         this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:box_color}));
 
         /*
@@ -233,18 +235,26 @@ export class Assignment2 extends Base_Scene {
         model_transform = this.draw_box(context, program_state, model_transform, 2);
         */
             const brown = hex_color("#D2B48C");
-        
 
+        //Box 1 Move
+        if(this.did_b1_move)
+        {
+            box1_transform = box1_transform.times(Mat4.translation(0,0, this.b1_move));
+            this.did_b1_move = false;
+            this.b1_move = 0;
+        }
         
 
         box1_transform = this.draw_box(context, program_state, box1_transform, this.colors[0]);
         box2_transform = this.draw_box(context, program_state, box2_transform, this.colors[1]);
         stage_transform = this.draw_box(context, program_state, stage_transform, brown);
 
+        this.b1 = box1_transform;
+
         console.log("box 1 counter: ", this.b1_counter);
         console.log("box 2 counter: ", this.b2_counter);
 
-
+        
 
 
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
