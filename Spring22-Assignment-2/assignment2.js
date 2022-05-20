@@ -62,6 +62,14 @@ class Base_Scene extends Scene {
         };
         // The white material and basic shader are used for drawing the outline.
         this.white = new Material(new defs.Basic_Shader());
+
+        //array for colors for boxes and fill in colors for the first time
+        this.colors = new Array(8);
+        this.set_colors();
+
+        // counters to check how many times we have clicked them
+        this.b1_counter = 0;
+        this.b2_counter = 0;
     }
 
     display(context, program_state) {
@@ -94,6 +102,10 @@ export class Assignment2 extends Base_Scene {
         // TODO:  Create a class member variable to store your cube's colors.
         // Hint:  You might need to create a member variable at somewhere to store the colors, using `this`.
         // Hint2: You can consider add a constructor for class Assignment2, or add member variables in Base_Scene's constructor.
+        for(let i = 0; i < 8; i++){
+            this.colors[i] = color(Math.random(), Math.random(), Math.random(), 1);
+        }
+
     }
 
     make_control_panel() {
@@ -105,6 +117,21 @@ export class Assignment2 extends Base_Scene {
         });
         this.key_triggered_button("Sit still", ["m"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
+        });
+
+        this.key_triggered_button("Box 1", ["x"], () => {
+            // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
+            this.colors[1] = color(Math.random(), Math.random(), Math.random(), 1);
+            this.b1_counter++;
+
+
+        });
+
+        this.key_triggered_button("Box 2", ["k"], () => {
+            // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
+            this.colors[0] = color(Math.random(), Math.random(), Math.random(), 1);
+            this.b2_counter++;
+
         });
     }
 
@@ -118,7 +145,7 @@ export class Assignment2 extends Base_Scene {
         model_transform = model_transform.times(Mat4.translation(0,0,0);
         this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
          */
-
+        /*
         //first box
         if (box_index == 0){
             const blue = hex_color("#1a9ffa");
@@ -141,6 +168,33 @@ export class Assignment2 extends Base_Scene {
             this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:brown}));
         }
 
+        */
+
+        const box_color = this.colors[box_index];
+
+        //first box
+        if (box_index == 0){
+            const blue = hex_color("#1a9ffa");
+            model_transform = model_transform.times(Mat4.translation(0,0 ,0 ));
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:box_color}));
+        }
+
+
+        //second box
+        if(box_index == 1){
+            const red = hex_color("#FF0000");
+            model_transform = model_transform.times(Mat4.translation(-20,0 ,0 ));
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:box_color}));
+        }
+
+        //stage
+        if(box_index == 2){
+            const brown = hex_color("#D2B48C");
+            model_transform = model_transform.times(Mat4.translation(-10,-2 ,0 ))
+                .times(Mat4.scale(20, 1, 20));
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:brown}));
+        }
+
         return model_transform;
     }
 
@@ -148,15 +202,30 @@ export class Assignment2 extends Base_Scene {
         super.display(context, program_state);
         const blue = hex_color("#1a9ffa");
         let model_transform = Mat4.identity();
+        let box1_transform = Mat4.identity();
+        let box2_transform = Mat4.identity();
+        let stage_transform = Mat4.identity();
+
 
         // Example for drawing a cube, you can remove this line if needed
         // this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
 
         //model_transform = this.draw_box(context, program_state, model_transform, 1);
 
-        model_transform = this.draw_box(context, program_state, model_transform, 0)
-        model_transform = this.draw_box(context, program_state, model_transform, 1)
-        model_transform = this.draw_box(context, program_state, model_transform, 2)
+
+        /*
+        model_transform = this.draw_box(context, program_state, model_transform, 0);
+        model_transform = this.draw_box(context, program_state, model_transform, 1);
+        model_transform = this.draw_box(context, program_state, model_transform, 2);
+        */
+
+
+        box1_transform = this.draw_box(context, program_state, box1_transform, 0);
+        box2_transform = this.draw_box(context, program_state, box2_transform, 1);
+        stage_transform = this.draw_box(context, program_state, stage_transform, 2);
+
+        console.log("box 1 counter: ", this.b1_counter);
+        console.log("box 2 counter: ", this.b2_counter);
 
 
 
