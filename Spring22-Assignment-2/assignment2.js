@@ -70,6 +70,15 @@ class Base_Scene extends Scene {
         // counters to check how many times we have clicked them
         this.b1_counter = 0;
         this.b2_counter = 0;
+        //Position Matrices to move boxes
+        const data_members = {
+                roll: 0, I_move: 0,
+                b1: Mat4.identity(), 
+                b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
+                platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
+               // radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
+            };
+        Object.assign(this, data_members);
     }
 
     display(context, program_state) {
@@ -119,13 +128,18 @@ export class Assignment2 extends Base_Scene {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
         });
 
+        
         this.key_triggered_button("Box 1", ["x"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
             this.colors[1] = color(Math.random(), Math.random(), Math.random(), 1);
             this.b1_counter++;
-
-
         });
+        //Moving Box 1
+        this.key_triggered_button("Box 1, Move North", ["u"], () => this.I_move = 1);
+
+
+
+        
 
         this.key_triggered_button("Box 2", ["k"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
@@ -175,7 +189,6 @@ export class Assignment2 extends Base_Scene {
         //first box
         if (box_index == 0){
             const blue = hex_color("#1a9ffa");
-            model_transform = model_transform.times(Mat4.translation(0,0 ,0 ));
             this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:box_color}));
         }
 
@@ -183,15 +196,12 @@ export class Assignment2 extends Base_Scene {
         //second box
         if(box_index == 1){
             const red = hex_color("#FF0000");
-            model_transform = model_transform.times(Mat4.translation(-20,0 ,0 ));
             this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:box_color}));
         }
 
         //stage
         if(box_index == 2){
             const brown = hex_color("#D2B48C");
-            model_transform = model_transform.times(Mat4.translation(-10,-2 ,0 ))
-                .times(Mat4.scale(20, 1, 20));
             this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:brown}));
         }
 
@@ -202,9 +212,9 @@ export class Assignment2 extends Base_Scene {
         super.display(context, program_state);
         const blue = hex_color("#1a9ffa");
         let model_transform = Mat4.identity();
-        let box1_transform = Mat4.identity();
-        let box2_transform = Mat4.identity();
-        let stage_transform = Mat4.identity();
+        let box1_transform = this.b1;
+        let box2_transform = this.b2;
+        let stage_transform = this.platform;
 
 
         // Example for drawing a cube, you can remove this line if needed
