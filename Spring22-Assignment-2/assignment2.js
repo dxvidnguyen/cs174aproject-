@@ -104,6 +104,9 @@ export class Assignment2 extends Base_Scene {
         super();
         const data_members = {
                 roll: 0, did_b1_move: false, b1_move: 0,
+                did_b1_move2: false, b1_move2: 0,
+                did_b2_move: false, b2_move: 0,
+                did_b2_move2: false, b2_move2: 0,
                 b1: Mat4.identity(), 
                 b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
                 platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
@@ -145,8 +148,13 @@ export class Assignment2 extends Base_Scene {
         //Moving Box 1
         this.key_triggered_button("Box 1, Move Forward", ["u"], () => {this.b1_move = -1; this.did_b1_move = true;});
         this.key_triggered_button("Box 1, Move Backward", ["j"], () => {this.b1_move = 1; this.did_b1_move = true;});
+        this.key_triggered_button("Box 1, Move Left", ["l"], () => {this.b1_move2 = -1; this.did_b1_move2 = true;});
+        this.key_triggered_button("Box 1, Move Right", [";"], () => {this.b1_move2 = 1; this.did_b1_move2 = true;});
 
-
+        this.key_triggered_button("Box 2, Move Forward", ["5"], () => {this.b2_move = -1; this.did_b2_move = true;});
+        this.key_triggered_button("Box 2, Move Backward", ["6"], () => {this.b2_move = 1; this.did_b2_move = true;});
+        this.key_triggered_button("Box 2, Move Left", ['7'], () => {this.b2_move2 = -1; this.did_b2_move2 = true;});
+        this.key_triggered_button("Box 2, Move Right", ["8"], () => {this.b2_move2 = 1; this.did_b2_move2 = true;});
 
         
 
@@ -251,6 +259,28 @@ export class Assignment2 extends Base_Scene {
             this.did_b1_move = false;
             this.b1_move = 0;
         }
+
+        if(this.did_b1_move2)
+        {
+            box1_transform = box1_transform.times(Mat4.translation(this.b1_move2,0, 0));
+            this.did_b1_move2 = false;
+            this.b1_move2 = 0;
+        }
+
+        if(this.did_b2_move)
+        {
+            box2_transform = box2_transform.times(Mat4.translation(0,0, this.b2_move));
+            this.did_b2_move = false;
+            this.b2_move = 0;
+        }
+
+        if(this.did_b2_move2)
+        {
+            box2_transform = box2_transform.times(Mat4.translation(this.b2_move2,0, 0));
+            this.did_b2_move2 = false;
+            this.b2_move2 = 0;
+        }
+        
         
 
         box1_transform = this.draw_box(context, program_state, box1_transform, this.colors[0]);
@@ -258,6 +288,7 @@ export class Assignment2 extends Base_Scene {
         stage_transform = this.draw_box(context, program_state, stage_transform, brown);
 
         this.b1 = box1_transform;
+        this.b2 = box2_transform;
 
         console.log("box 1 counter: ", this.b1_counter);
         console.log("box 2 counter: ", this.b2_counter);
