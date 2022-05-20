@@ -1,0 +1,5 @@
+David 05/19:
+- Used assignment 2 for starter code
+- placed two boxes and stage
+- boxes change color upon clicking keys x for box 1 and k for box 2
+- counters keep track of amount of times boxes are clicked (for calculating how fast they should go later on) 
