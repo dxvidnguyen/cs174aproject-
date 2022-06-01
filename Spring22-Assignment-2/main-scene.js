@@ -3,15 +3,9 @@ import {Big_Box_Push} from "./physics-test.js"
 
 import {Transforms_Sandbox} from "./examples/transforms-sandbox.js"
 import {Assignment2} from "./assignment2.js"
-<<<<<<< Updated upstream
 
-=======
-<<<<<<< HEAD
-import {Big_Box_Push} from "./physics-test.js"
-=======
 
->>>>>>> 343ac6a571a4e3f4140d450787a65b15ae42481e
->>>>>>> Stashed changes
+
 // Pull these names into this module's scope for convenience:
 const {
     Vector, Vector3, vec, vec3, vec4, color, Matrix, Mat4, Light, Shape, Material, Shader, Texture, Scene,
