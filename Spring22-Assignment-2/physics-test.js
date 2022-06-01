@@ -1,7 +1,7 @@
 import {defs, tiny} from './examples/common.js';
 
 // Pull these names into this module's scope for convenience:
-const {vec3, unsafe3, vec4, color, Mat4, Light, Shape, Material, Shader, Texture, Scene} = tiny;
+const {vec3, unsafe3, vec4, color, Mat4, Light, Shape, Material, Shader, Texture, Scene, hex_color} = tiny;
 
 export class Body {
     // **Body** can store and update the properties of a 3D body that incrementally
@@ -11,7 +11,7 @@ export class Body {
         Object.assign(this,
             {shape, material, size})
     }
-
+    
     // (within some margin of distance).
     static intersect_cube(p, margin = 0) {
         return p.every(value => value >= -1 - margin && value <= 1 + margin)
@@ -84,7 +84,6 @@ export class Body {
     }
 }
 
-
 export class Simulation extends Scene {
     // **Simulation** manages the stepping of simulation time.  Subclass it when making
     // a Scene that is a physics demo.  This technique is careful to totally decouple
@@ -92,6 +91,10 @@ export class Simulation extends Scene {
     constructor() {
         super();
         Object.assign(this, {time_accumulator: 0, time_scale: 1, t: 0, dt: 1 / 20, bodies: [], steps_taken: 0});
+        this.material = new Material(new defs.Phong_Shader(), {
+            color:  hex_color("#ffffff"),
+            ambient: .4
+        })       
     }
 
     simulate(frame_time) {
@@ -124,6 +127,17 @@ export class Simulation extends Scene {
     }
 
     display(context, program_state) {
+        if (!context.scratchpad.controls) {
+            this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
+            // Define the global camera and projection matrices, which are stored in program_state.
+            program_state.set_camera(Mat4.translation(5, -10, -30));
+        }
+        program_state.projection_transform = Mat4.perspective(
+            Math.PI / 4, context.width / context.height, 1, 100);
+
+        // *** Lights: *** Values of vector or point lights.
+        const light_position = vec4(0, 5, 5, 1);
+        program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
         // display(): advance the time and state of our whole simulation.
         if (program_state.animate)
             this.simulate(program_state.animation_delta_time);
@@ -144,7 +158,7 @@ export class Big_Box_Push extends Simulation {
         this.shapes = {cube:new defs.Cube()};
         const shader = new defs.Fake_Bump_Map(1);
         this.material = new Material(shader, {
-            color: color(.4, .8, .4, 1),
+            color:  hex_color("#ffffff"),
             ambient: .4
         })
         this.collider = {intersect_test: Body.intersect_cube, points: new defs.Cube(), leeway: .1}
@@ -170,6 +184,18 @@ export class Big_Box_Push extends Simulation {
         //initial setup
         this.set_camera = false;
         this.added_bodies = false;
+
+        const data_members = {               
+            roll: 0, did_b1_move: false, b1_move: 0,
+            did_b1_move2: false, b1_move2: 0,
+            did_b2_move: false, b2_move: 0,
+            did_b2_move2: false, b2_move2: 0,
+            b1: Mat4.identity(), 
+            b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
+            platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
+            // radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
+            };
+        Object.assign(this, data_members);
     }
     make_control_panel(){
         super.make_control_panel();
@@ -238,8 +264,8 @@ export class Big_Box_Push extends Simulation {
                                                             this.directions[1][1] = 1;
                                                               }
                                   ,undefined, () => {this.directions[1][1] = 0;});
-        
     }
+    
     // limit x so that lx <= x <= ux
     limit(x, lx, ux)
     {
@@ -384,6 +410,10 @@ export class Big_Box_Push extends Simulation {
     display(context, program_state) {
         // display(): Draw everything else in the scene besides the moving bodies.
         super.display(context, program_state);
+
+        let model_transform = Mat4.identity();
+        const brown = hex_color("#D2B48C");
+        const t = this.t = program_state.animation_time / 1000;
 
         if (!this.set_camera) {
             this.set_camera = true;
