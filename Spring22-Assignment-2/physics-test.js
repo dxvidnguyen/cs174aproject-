@@ -91,10 +91,6 @@ export class Simulation extends Scene {
     constructor() {
         super();
         Object.assign(this, {time_accumulator: 0, time_scale: 1, t: 0, dt: 1 / 20, bodies: [], steps_taken: 0});
-        this.material = new Material(new defs.Phong_Shader(), {
-            color:  hex_color("#ffffff"),
-            ambient: .4
-        })       
     }
 
     simulate(frame_time) {
@@ -158,10 +154,10 @@ export class Big_Box_Push extends Simulation {
         this.shapes = {cube:new defs.Cube()};
         const shader = new defs.Fake_Bump_Map(1);
         this.material = new Material(shader, {
-            color:  hex_color("#ffffff"),
+            color:  hex_color("#83a832"),
             ambient: .4
         })
-        this.collider = {intersect_test: Body.intersect_cube, points: new defs.Cube(), leeway: .1}
+        this.collider = {intersect_test: Body.intersect_cube, points: new defs.Cube(), leeway: .01}
         // test material
         // this.intersect_material = this.material.override({color: color(0.1, 0.1, 0.1, 1)})
         
@@ -184,18 +180,6 @@ export class Big_Box_Push extends Simulation {
         //initial setup
         this.set_camera = false;
         this.added_bodies = false;
-
-        const data_members = {               
-            roll: 0, did_b1_move: false, b1_move: 0,
-            did_b1_move2: false, b1_move2: 0,
-            did_b2_move: false, b2_move: 0,
-            did_b2_move2: false, b2_move2: 0,
-            b1: Mat4.identity(), 
-            b2: Mat4.identity().times(Mat4.translation(-20,0,0)), 
-            platform: Mat4.identity().times(Mat4.translation(-10,-2,0)).times(Mat4.scale(20, 1, 20)),
-            // radians_per_frame: 1 / 200, meters_per_frame: 20, speed_multiplier: 1
-            };
-        Object.assign(this, data_members);
     }
     make_control_panel(){
         super.make_control_panel();
