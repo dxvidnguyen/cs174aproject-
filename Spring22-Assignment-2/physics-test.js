@@ -180,9 +180,31 @@ export class Big_Box_Push extends Simulation {
         //initial setup
         this.set_camera = false;
         this.added_bodies = false;
+
+        //colors for boxes
+        this.box_colors = new Array(2);
+        this.box_colors[0] = "#FFFF00";
+        this.box_colors[1] = "#FF0000";
+
+
+        //flags for start and end game
+        this.playgame = false;
     }
     make_control_panel(){
         super.make_control_panel();
+
+        //start and end game
+        this.live_string(box => {
+            box.textContent = "Start / End Game";
+        });
+        this.new_line();
+        this.key_triggered_button("Start Game", ["t"], () => {this.playgame = true});
+        this.key_triggered_button("End Game", ["y"], () => {this.playgame = false});
+
+        this.new_line();
+
+
+
         // p1 controls
         this.live_string(box => {
             box.textContent = "P1 Controls";
@@ -271,9 +293,11 @@ export class Big_Box_Push extends Simulation {
             this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
                              .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             //Player bodies
-            for (var i = 0; i < 2; i++)
-                this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
-                         .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            for (var i = 0; i < 2; i++){
+                this.bodies.push(new Body(this.shapes.cube, this.material.override({color: hex_color(this.box_colors[i])}), vec3(2, 2, 2))
+                    .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            }
+
             this.added_bodies = true;
         }
         //use player input to move bodies
@@ -398,7 +422,12 @@ export class Big_Box_Push extends Simulation {
 
     display(context, program_state) {
         // display(): Draw everything else in the scene besides the moving bodies.
-        super.display(context, program_state);
+
+        if(this.playgame){
+            super.display(context, program_state);
+            program_state.set_camera((Mat4.translation(0,0,-50)));
+        }
+
 
         let model_transform = Mat4.identity();
         const brown = hex_color("#D2B48C");
