@@ -154,15 +154,17 @@ export class Big_Box_Push extends Simulation {
     constructor() {
         super();
         this.shapes = {cube:new defs.Cube()};
-        const shader = new defs.Fake_Bump_Map(1);
+        const shader = new defs.Fake_Bump_Map(5);
         this.material = new Material(shader, {
             color:  hex_color("#83a832"),
-            ambient: .4
+            ambient: .1,
+            texture: new Texture("assets/fav.ico", "NEAREST")
         })
 
         this.scene_material = new Material(shader, {
             color: hex_color("#ffffff"),
-            ambient: .4
+            ambient: .2,
+            diffusivity: 0.4,
         }
             
         )
@@ -201,7 +203,6 @@ export class Big_Box_Push extends Simulation {
         this.accs = [vec3(0, 0, 0), vec3(0, 0, 0)];
 
         // player spawns
-
         this.spawn_points= [vec3(-9, -7.5, 0), vec3(9, -7.5, 0)];
 
         // jump mechanics
@@ -211,6 +212,8 @@ export class Big_Box_Push extends Simulation {
         this.friction_coefficient = 0.9;
         // movement speed
         this.speed = 2.25;
+        // winner
+        this.winner = 0;
 
         //initial setup
         this.set_camera = false;
@@ -228,6 +231,7 @@ export class Big_Box_Push extends Simulation {
         this.brandnew = true;
         this.not_started = true;
         this.end_game = false;
+        this.Restart = false;
 
 
     }
@@ -241,10 +245,9 @@ export class Big_Box_Push extends Simulation {
         this.new_line();
         this.key_triggered_button("Start Game", ["t"], () => {this.playgame = true});
         this.key_triggered_button("End Game", ["y"], () => {this.end_game = true});
+        this.key_triggered_button("Restart Game", ["Backspace"], () => {this.Restart = true});
 
         this.new_line();
-
-
 
         // p1 controls
         this.live_string(box => {
@@ -311,6 +314,7 @@ export class Big_Box_Push extends Simulation {
                                                             this.directions[1][1] = 1;
                                                               }
                                   ,undefined, () => {this.directions[1][1] = 0;});
+    
     }
     
     // limit x so that lx <= x <= ux
@@ -326,6 +330,8 @@ export class Big_Box_Push extends Simulation {
     update_state(dt) {
         // update_state():  Override the base time-stepping code to say what this particular
         // scene should do to its bodies every frame -- including applying forces.
+
+        if(this.playgame){
         
         // add initial bodies
         if(!this.added_bodies)
@@ -344,6 +350,7 @@ export class Big_Box_Push extends Simulation {
         //use player input to move bodies
         for (var i = 0; i < 2; i++) {
             let b = this.bodies[i+1];
+            
             // Gravity by magic number
             this.bodies[0].linear_velocity[1] = 0;
             this.bodies[0].center[1] = -12;
@@ -359,11 +366,19 @@ export class Big_Box_Push extends Simulation {
             {
                 falling = true;
             }
-            // if below bottom blast zone, respawn
-            if(b.center[1] < -40)
+            // if below bottom blast zone, respawn and reset the game
+            // Also, if someone preemptively chooses to restart, both boxes will respawn
+            if(b.center[1] < -40 || this.Restart)
             {
                 b.center = this.spawn_points[i];
                 b.linear_velocity = vec3(0, -0.1, 0);
+                
+                if(!this.Restart)
+                    {this.end_game = true;}
+                else
+                    {
+                        this.winner = i;
+                    }
             }
 
             if (b.center[1] < -8 && b.center[1] > -10 && b.linear_velocity[1] < 0 && !falling)
@@ -478,6 +493,8 @@ export class Big_Box_Push extends Simulation {
             // a.angular_velocity = 0.1 * d_top.dot(vec3(0, 1, 0));
             // b.angular_velocity = 0.1 * b.spin_axis.dot(vec3(0, 1, 0));
         }
+
+    }
     }
 
     display(context, program_state) {
@@ -492,10 +509,10 @@ export class Big_Box_Push extends Simulation {
        // let starter = Mat4.identity();
        // this.shapes.cube.draw(context, program_state, starter, this.material);
 
-
-        super.display(context, program_state);
+        super.display(context, program_state);        
         if(this.brandnew){
             program_state.set_camera((Mat4.translation(0,0,-4)));
+            this.Restart = false;
         }
 
         let start_box = Mat4.identity();
@@ -516,6 +533,15 @@ export class Big_Box_Push extends Simulation {
         if(this.end_game){
             program_state.set_camera((Mat4.translation(0,0,-4)));
             this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
+        }
+
+        if(this.Restart)
+        {
+            this.playgame = false;
+            this.before_game = true;
+            this.brandnew = true;
+            this.not_started = true;
+            this.end_game = false;
         }
 
 
