@@ -349,18 +349,24 @@ export class Big_Box_Push extends Simulation {
             this.bodies[0].center[1] = -12;
             this.accs[i][1] += dt * -2;
             // If about to fall through floor, move center to surface, set y-vel = 0
-            //If the box moves out of bounds, return to center
-            if (b.center[0] > 18 || b.center[0] < -18)
+            //If the box moves out of bounds, don't move center to surface
+            var falling = false;
+            if (b.center[0] > 22 || b.center[0] < -22)
+            {
+                falling = true;
+            }
+            if (b.center[2] > 22 || b.center[2] < -22)
+            {
+                falling = true;
+            }
+            // if below bottom blast zone, respawn
+            if(b.center[1] < -40)
             {
                 b.center = this.spawn_points[i];
                 b.linear_velocity = vec3(0, -0.1, 0);
             }
-            if (b.center[2] > 18 || b.center[2] < -18)
-            {
-                b.center = this.spawn_points[i];
-                b.linear_velocity = vec3(0, -0.1, 0);
-            }
-            if (b.center[1] < -8 && b.linear_velocity[1] < 0)
+
+            if (b.center[1] < -8 && b.center[1] > -10 && b.linear_velocity[1] < 0 && !falling)
             {
                 b.linear_velocity[1] = 0;
                 b.center[1] = -8;
