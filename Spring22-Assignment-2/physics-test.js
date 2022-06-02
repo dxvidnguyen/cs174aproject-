@@ -3,6 +3,8 @@ import {defs, tiny} from './examples/common.js';
 // Pull these names into this module's scope for convenience:
 const {vec3, unsafe3, vec4, color, Mat4, Light, Shape, Material, Shader, Texture, Scene, hex_color} = tiny;
 
+const {Cube, Axis_Arrows, Textured_Phong} = defs
+
 export class Body {
     // **Body** can store and update the properties of a 3D body that incrementally
     // moves from its previous place due to velocities.  It conforms to the
@@ -157,12 +159,34 @@ export class Big_Box_Push extends Simulation {
             color:  hex_color("#83a832"),
             ambient: .4
         })
+
         this.scene_material = new Material(shader, {
             color: hex_color("#ffffff"),
             ambient: .4
         }
             
         )
+
+
+
+        this.start_scene = {
+            start: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/start.jpg", "NEAREST")
+            }),
+            end_of_game: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/gameover.jpg", "NEAREST")
+            }),
+        }
+
+
+
+
+
+
         this.collider = {intersect_test: Body.intersect_cube, points: new defs.Cube(), leeway: .01}
         // test material
         // this.intersect_material = this.material.override({color: color(0.1, 0.1, 0.1, 1)})
@@ -186,9 +210,37 @@ export class Big_Box_Push extends Simulation {
         //initial setup
         this.set_camera = false;
         this.added_bodies = false;
+
+        //colors for boxes
+        this.box_colors = new Array(2);
+        this.box_colors[0] = "#FFFF00";
+        this.box_colors[1] = "#FF0000";
+
+
+        //flags for start and end game
+        this.playgame = false;
+        this.before_game = true;
+        this.brandnew = true;
+        this.not_started = true;
+        this.end_game = false;
+
+
     }
     make_control_panel(){
         super.make_control_panel();
+
+        //start and end game
+        this.live_string(box => {
+            box.textContent = "Start / End Game";
+        });
+        this.new_line();
+        this.key_triggered_button("Start Game", ["t"], () => {this.playgame = true});
+        this.key_triggered_button("End Game", ["y"], () => {this.end_game = true});
+
+        this.new_line();
+
+
+
         // p1 controls
         this.live_string(box => {
             box.textContent = "P1 Controls";
@@ -277,9 +329,11 @@ export class Big_Box_Push extends Simulation {
             this.bodies.push(new Body(this.shapes.cube, this.scene_material, vec3(20, 2, 20))
                              .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             //Player bodies
-            for (var i = 0; i < 2; i++)
-                this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
-                         .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            for (var i = 0; i < 2; i++){
+                this.bodies.push(new Body(this.shapes.cube, this.material.override({color: hex_color(this.box_colors[i])}), vec3(2, 2, 2))
+                    .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            }
+
             this.added_bodies = true;
         }
         //use player input to move bodies
@@ -415,7 +469,45 @@ export class Big_Box_Push extends Simulation {
 
     display(context, program_state) {
         // display(): Draw everything else in the scene besides the moving bodies.
+        /*
+        if(this.before_game){
+            let begin_transform = Mat4.identity();
+            this.shapes.cube.draw(context, program_state, begin_transform, this.start_scene);
+        }
+         */
+
+       // let starter = Mat4.identity();
+       // this.shapes.cube.draw(context, program_state, starter, this.material);
+
+
         super.display(context, program_state);
+        if(this.brandnew){
+            program_state.set_camera((Mat4.translation(0,0,-4)));
+        }
+
+        let start_box = Mat4.identity();
+        if(this.not_started){
+            this.shapes.cube.draw(context, program_state, start_box, this.start_scene.start)
+        }
+
+
+        if(this.playgame){
+            if(this.not_started){
+                program_state.set_camera((Mat4.translation(0,0,-50)));
+            }
+            this.brandnew = false;
+            this.not_started = false;
+        }
+
+
+        if(this.end_game){
+            program_state.set_camera((Mat4.translation(0,0,-4)));
+            this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
+        }
+
+
+
+
 
         let model_transform = Mat4.identity();
         const brown = hex_color("#D2B48C");
