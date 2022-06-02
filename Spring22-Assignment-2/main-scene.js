@@ -1,6 +1,5 @@
 import {defs, tiny} from './examples/common.js';
 import {Big_Box_Push} from "./physics-test.js"
-import {Rotate_Big_Box_Push} from "./physics-test-rotating-controls.js"
 import {Transforms_Sandbox} from "./examples/transforms-sandbox.js"
 import {Assignment2} from "./assignment2.js"
 
@@ -23,7 +22,7 @@ const {
 const Minimal_Webgl_Demo = defs.Minimal_Webgl_Demo;
 
 Object.assign(defs,
-            {Transforms_Sandbox}, {Assignment2}, {Big_Box_Push}, {Rotate_Big_Box_Push});
+            {Transforms_Sandbox}, {Assignment2}, {Big_Box_Push});
 
 // ******************** End extra step
 

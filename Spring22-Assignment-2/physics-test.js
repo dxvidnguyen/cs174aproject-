@@ -182,6 +182,16 @@ export class Big_Box_Push extends Simulation {
                 ambient: 1,
                 texture: new Texture("assets/gameover.jpg", "NEAREST")
             }),
+           player1wins: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/gameover.jpg", "NEAREST")
+            }),
+            player2wins: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/gameover.jpg", "NEAREST")
+            }),
         }
 
 
@@ -366,7 +376,7 @@ export class Big_Box_Push extends Simulation {
             {
                 falling = true;
             }
-            // if below bottom blast zone, respawn and reset the game
+            // if below bottom blast zone, respawn and end the game
             // Also, if someone preemptively chooses to restart, both boxes will respawn
             if(b.center[1] < -40 || this.Restart)
             {
@@ -533,6 +543,7 @@ export class Big_Box_Push extends Simulation {
         if(this.end_game){
             program_state.set_camera((Mat4.translation(0,0,-4)));
             this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
+
         }
 
         if(this.Restart)
