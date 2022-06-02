@@ -157,6 +157,12 @@ export class Big_Box_Push extends Simulation {
             color:  hex_color("#83a832"),
             ambient: .4
         })
+        this.scene_material = new Material(shader, {
+            color: hex_color("#ffffff"),
+            ambient: .4
+        }
+            
+        )
         this.collider = {intersect_test: Body.intersect_cube, points: new defs.Cube(), leeway: .01}
         // test material
         // this.intersect_material = this.material.override({color: color(0.1, 0.1, 0.1, 1)})
@@ -268,7 +274,7 @@ export class Big_Box_Push extends Simulation {
         if(!this.added_bodies)
         {
             //Adding Platform body
-            this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
+            this.bodies.push(new Body(this.shapes.cube, this.scene_material, vec3(20, 2, 20))
                              .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             //Player bodies
             for (var i = 0; i < 2; i++)
@@ -280,8 +286,19 @@ export class Big_Box_Push extends Simulation {
         for (var i = 0; i < 2; i++) {
             let b = this.bodies[i+1];
             // Gravity by magic number
+            this.bodies[0].linear_velocity[1] = 0;
+            this.bodies[0].center[1] = -12;
             this.accs[i][1] += dt * -2;
             // If about to fall through floor, move center to surface, set y-vel = 0
+            //If the box moves out of bounds, return to center
+            if (b.center[0] > 18 || b.center[0] < -18)
+            {
+                b.center[0] = 0;
+            }
+            if (b.center[2] > 18 || b.center[2] < -18)
+            {
+                b.center[2] = 0;
+            }
             if (b.center[1] < -8 && b.linear_velocity[1] < 0)
             {
                 b.linear_velocity[1] = 0;
