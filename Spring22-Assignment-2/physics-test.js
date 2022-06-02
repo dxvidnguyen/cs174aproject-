@@ -157,6 +157,21 @@ export class Big_Box_Push extends Simulation {
             color:  hex_color("#83a832"),
             ambient: .4
         })
+
+        this.my_colors = new Array(2);
+        this.my_colors[0] = "#FF0000";
+        this.my_colors[1] = "#FFFF00";
+
+
+
+        //start game flag
+        this.start_game = false;
+
+
+        this.platform_material = new Material(new defs.Phong_Shader(), {ambient: 0.6, color : hex_color("#C4A484")});
+
+        this.bench_material = new Material(new defs.Phong_Shader(), {ambient: 0.6, color: hex_color("#964B00")});
+
         this.collider = {intersect_test: Body.intersect_cube, points: new defs.Cube(), leeway: .01}
         // test material
         // this.intersect_material = this.material.override({color: color(0.1, 0.1, 0.1, 1)})
@@ -183,6 +198,24 @@ export class Big_Box_Push extends Simulation {
     }
     make_control_panel(){
         super.make_control_panel();
+
+        this.live_string( box => {
+            box.textContent = "Start/End Game";
+            });
+
+        this.new_line();
+
+        this.key_triggered_button("start game", ["t"], () => {
+            this.start_game = true;
+        });
+
+        this.key_triggered_button("end game", ["y"], () => {
+            this.start_game = false;
+        });
+
+        this.new_line();
+
+
         // p1 controls
         this.live_string(box => {
             box.textContent = "P1 Controls";
@@ -248,6 +281,8 @@ export class Big_Box_Push extends Simulation {
                                                             this.directions[1][1] = 1;
                                                               }
                                   ,undefined, () => {this.directions[1][1] = 0;});
+
+
     }
     
     // limit x so that lx <= x <= ux
@@ -267,9 +302,28 @@ export class Big_Box_Push extends Simulation {
         // add initial bodies
         if(!this.added_bodies)
         {
-            for (var i = 0; i < 2; i++)
-                this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
-                         .emplace(Mat4.translation(-10 + 20 * i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            for(var i = 0; i < 2; i++){
+                this.bodies.push(new Body(this.shapes.cube, this.material.override({color : hex_color(this.my_colors[i])}), vec3(2, 2, 2))
+                    .emplace(Mat4.translation(-10 + 20 * i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+
+            }
+
+            /*
+            for (var i = 0; i < 2; i++){
+                if(i == 0){
+                    this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
+                        .emplace(Mat4.translation(-10 + 20 * i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+                }
+                else{
+                    this.bodies.push(new Body(this.shapes.cube, this.material.override({color : hex_color("#800000")}), vec3(2, 2, 2))
+                        .emplace(Mat4.translation(-10 + 20 * i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+
+                }
+
+            }
+
+             */
+
             this.added_bodies = true;
         }
         //use player input to move bodies
@@ -393,7 +447,12 @@ export class Big_Box_Push extends Simulation {
 
     display(context, program_state) {
         // display(): Draw everything else in the scene besides the moving bodies.
-        super.display(context, program_state);
+
+        if(this.start_game){
+            super.display(context, program_state);
+            program_state.set_camera(Mat4.translation(0,0,-40));
+        }
+
 
         let model_transform = Mat4.identity();
         const brown = hex_color("#D2B48C");
@@ -408,5 +467,24 @@ export class Big_Box_Push extends Simulation {
         
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 500);
         program_state.lights = [new Light(vec4(0, -5, -10, 1), color(1, 1, 1, 1), 100000)];
+
+
+        model_transform = model_transform.times(Mat4.translation(0, -18, -30))
+            .times(Mat4.scale(40, 2, 30));
+
+        let bench1 = Mat4.identity();
+        let bench2 = Mat4.identity();
+        let bench3 = Mat4.identity();
+
+        let benches = {bench1, bench2, bench3}
+
+
+
+
+
+        //Mat4.scale(10, 2, 10)
+          //  .Mat4.translation(0, -2, 0);
+
+        this.shapes.cube.draw(context, program_state, model_transform, this.platform_material);
     }
 }

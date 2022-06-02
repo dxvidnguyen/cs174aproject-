@@ -1,8 +1,8 @@
 import {defs, tiny} from './examples/common.js';
-import {Big_Box_Push} from "./physics-test.js"
+import {Big_Box_Push} from "./physics-test.js";
 
-import {Transforms_Sandbox} from "./examples/transforms-sandbox.js"
-import {Assignment2} from "./assignment2.js"
+import {Transforms_Sandbox} from "./examples/transforms-sandbox.js";
+import {Assignment2} from "./assignment2.js";
 
 
 
