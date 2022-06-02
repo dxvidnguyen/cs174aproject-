@@ -199,6 +199,11 @@ export class Big_Box_Push extends Simulation {
         
         // player accelerations
         this.accs = [vec3(0, 0, 0), vec3(0, 0, 0)];
+
+        // player spawns
+
+        this.spawn_points= [vec3(-9, -7.5, 0), vec3(9, -7.5, 0)];
+
         // jump mechanics
         this.flying = [false, false];
         this.double_jumped = [false, false];
@@ -347,11 +352,13 @@ export class Big_Box_Push extends Simulation {
             //If the box moves out of bounds, return to center
             if (b.center[0] > 18 || b.center[0] < -18)
             {
-                b.center[0] = 0;
+                b.center = this.spawn_points[i];
+                b.linear_velocity = vec3(0, -0.1, 0);
             }
             if (b.center[2] > 18 || b.center[2] < -18)
             {
-                b.center[2] = 0;
+                b.center = this.spawn_points[i];
+                b.linear_velocity = vec3(0, -0.1, 0);
             }
             if (b.center[1] < -8 && b.linear_velocity[1] < 0)
             {
