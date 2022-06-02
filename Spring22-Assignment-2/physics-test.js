@@ -267,17 +267,21 @@ export class Big_Box_Push extends Simulation {
         // add initial bodies
         if(!this.added_bodies)
         {
+            //Adding Platform body
+            this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
+                             .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            //Player bodies
             for (var i = 0; i < 2; i++)
                 this.bodies.push(new Body(this.shapes.cube, this.material, vec3(2, 2, 2))
-                         .emplace(Mat4.translation(-10 + 20 * i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+                         .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             this.added_bodies = true;
         }
         //use player input to move bodies
-        for (var i = 0; i < this.bodies.length; i++) {
-            let b = this.bodies[i];
+        for (var i = 0; i < 2; i++) {
+            let b = this.bodies[i+1];
             // Gravity by magic number
             this.accs[i][1] += dt * -2;
-            // If about to fall through floor, move center to surface, set y-vel = 0:
+            // If about to fall through floor, move center to surface, set y-vel = 0
             if (b.center[1] < -8 && b.linear_velocity[1] < 0)
             {
                 b.linear_velocity[1] = 0;
@@ -336,8 +340,9 @@ export class Big_Box_Push extends Simulation {
         }
 
         // one pass collision funtion
-        let a = this.bodies[0];
-        let b = this.bodies[1];
+        let player_body_start = 1;
+        let a = this.bodies[player_body_start];
+        let b = this.bodies[player_body_start+1];
         if(a.check_if_colliding(b, this.collider))
         {
             // vec from b.center to a.center
