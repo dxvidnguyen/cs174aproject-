@@ -185,12 +185,12 @@ export class Big_Box_Push extends Simulation {
            player1wins: new Material(new Textured_Phong(), {
                 color: hex_color("#000000"),
                 ambient: 1,
-                texture: new Texture("assets/gameover.jpg", "NEAREST")
+                texture: new Texture("assets/Game_Over_Player_1_Wins.jpg", "NEAREST")
             }),
             player2wins: new Material(new Textured_Phong(), {
                 color: hex_color("#000000"),
                 ambient: 1,
-                texture: new Texture("assets/gameover.jpg", "NEAREST")
+                texture: new Texture("assets/Game_Over_Player_2_Wins.jpg", "NEAREST")
             }),
         }
 
@@ -223,7 +223,8 @@ export class Big_Box_Push extends Simulation {
         // movement speed
         this.speed = 2.25;
         // winner
-        this.winner = 0;
+        this.loser = 0;
+        this.winner_decided = false;
 
         //initial setup
         this.set_camera = false;
@@ -384,10 +385,9 @@ export class Big_Box_Push extends Simulation {
                 b.linear_velocity = vec3(0, -0.1, 0);
                 
                 if(!this.Restart)
-                    {this.end_game = true;}
-                else
                     {
-                        this.winner = i;
+                        this.end_game = true;                    
+                        this.loser = i+1;
                     }
             }
 
@@ -542,7 +542,18 @@ export class Big_Box_Push extends Simulation {
 
         if(this.end_game){
             program_state.set_camera((Mat4.translation(0,0,-4)));
-            this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
+            if(this.loser == 2)
+            {
+                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player1wins)                
+            }
+            else if(this.loser == 1)
+            {
+                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player2wins)                
+            }
+            else
+            {
+                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
+            }
 
         }
 
@@ -553,6 +564,8 @@ export class Big_Box_Push extends Simulation {
             this.brandnew = true;
             this.not_started = true;
             this.end_game = false;
+            this.winner_decided = false;
+            this.loser = 0;
         }
 
 
