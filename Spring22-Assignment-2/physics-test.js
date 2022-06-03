@@ -305,7 +305,7 @@ export class Big_Box_Push extends Simulation {
                                                           else if(this.directions[0][2] == -1)
                                                               this.directions[0][2] = 0;}
                                   ,undefined, () => {this.directions[0][2] = 0;});
-        this.key_triggered_button("P1 Jump", ["Control"], () => {if(this.directions[0][1] == 0 && !this.double_jumped[0])
+        this.key_triggered_button("P1 Jump", ["e"], () => {if(this.directions[0][1] == 0 && !this.double_jumped[0])
                                                             this.directions[0][1] = 1;
                                                               }
                                   ,undefined, () => {this.directions[0][1] = 0;});
@@ -339,7 +339,7 @@ export class Big_Box_Push extends Simulation {
                                   ,undefined, () => {this.directions[1][2] = 0;});
 
 
-        this.key_triggered_button("P2 Boost", ["h"], () => {if(this.boost[1] <= 1)
+        this.key_triggered_button("P2 Boost", ["Enter"], () => {if(this.boost[1] <= 1)
                                                                 this.boost[1] = 5});
         this.key_triggered_button("P2 Jump", ["Shift"], () => {if(this.directions[1][1] == 0 && !this.double_jumped[1])
                                                             this.directions[1][1] = 1;
