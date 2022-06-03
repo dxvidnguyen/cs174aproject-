@@ -153,7 +153,10 @@ export class Simulation extends Scene {
 export class Big_Box_Push extends Simulation {
     constructor() {
         super();
-        this.shapes = {cube:new defs.Cube()};
+        this.shapes = {
+            cube:new defs.Cube(),
+            backdrop: new defs.Cube(),
+        };
         const shader = new defs.Fake_Bump_Map(5);
         this.material = new Material(shader, {
             color:  hex_color("#83a832"),
@@ -162,8 +165,8 @@ export class Big_Box_Push extends Simulation {
         })
 
         this.scene_material = new Material(shader, {
-            color: hex_color("#ffffff"),
-            ambient: .2,
+            color: hex_color("#C4A484"),
+            ambient: 0.2,
             diffusivity: 0.4,
         }
             
@@ -192,6 +195,21 @@ export class Big_Box_Push extends Simulation {
                 ambient: 1,
                 texture: new Texture("assets/Game_Over_Player_2_Wins.jpg", "NEAREST")
             }),
+
+            backy: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 0.5,
+                texture: new Texture("assets/back.png", "NEAREST")
+            }),
+
+            wood: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 0.5,
+                texture: new Texture("assets/wooden.jpeg", "NEAREST")
+            }),
+
+
+
         }
 
 
@@ -243,6 +261,7 @@ export class Big_Box_Push extends Simulation {
         this.not_started = true;
         this.end_game = false;
         this.Restart = false;
+        this.notover = true;
 
 
     }
@@ -342,19 +361,34 @@ export class Big_Box_Push extends Simulation {
         // update_state():  Override the base time-stepping code to say what this particular
         // scene should do to its bodies every frame -- including applying forces.
 
-        if(this.playgame){
+        
         
         // add initial bodies
         if(!this.added_bodies)
         {
+            /*
+            let background = Mat4.identity();
+        background = background.times(Mat4.translation(0,0,-20))
+            .times(Mat4.scale(10,10,0 ));
+
+        this.shapes.cube.draw(context, program_state, background, this.start_scene.start)
+             */
+
+
+
+
             //Adding Platform body
-            this.bodies.push(new Body(this.shapes.cube, this.scene_material, vec3(20, 2, 20))
+            this.bodies.push(new Body(this.shapes.cube, this.start_scene.wood, vec3(20, 2, 20))
                              .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             //Player bodies
             for (var i = 0; i < 2; i++){
                 this.bodies.push(new Body(this.shapes.cube, this.material.override({color: hex_color(this.box_colors[i])}), vec3(2, 2, 2))
                     .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             }
+
+            //Adding Platform body
+            this.bodies.push(new Body(this.shapes.cube, this.start_scene.backy, vec3(100, 100, 1))
+                .emplace(Mat4.translation(0, 0, -30), vec3(0, 0.1, 0), 0, vec3(0, 0, 0.000000000000000000000001)));
 
             this.added_bodies = true;
         }
@@ -379,15 +413,19 @@ export class Big_Box_Push extends Simulation {
             }
             // if below bottom blast zone, respawn and end the game
             // Also, if someone preemptively chooses to restart, both boxes will respawn
-            if(b.center[1] < -40 || this.Restart)
+            if(b.center[1] < -40 || this.Restart || !this.playgame)
             {
                 b.center = this.spawn_points[i];
                 b.linear_velocity = vec3(0, -0.1, 0);
                 
-                if(!this.Restart)
+                if(!this.Restart && this.playgame)
                     {
-                        this.end_game = true;                    
-                        this.loser = i+1;
+                        this.end_game = true;
+                        if(this.notover){
+                            this.loser = i+1;
+                            this.notover = false;
+                        }
+
                     }
             }
 
@@ -503,8 +541,6 @@ export class Big_Box_Push extends Simulation {
             // a.angular_velocity = 0.1 * d_top.dot(vec3(0, 1, 0));
             // b.angular_velocity = 0.1 * b.spin_axis.dot(vec3(0, 1, 0));
         }
-
-    }
     }
 
     display(context, program_state) {
@@ -519,7 +555,19 @@ export class Big_Box_Push extends Simulation {
        // let starter = Mat4.identity();
        // this.shapes.cube.draw(context, program_state, starter, this.material);
 
-        super.display(context, program_state);        
+        super.display(context, program_state);
+
+        /*
+
+        let background = Mat4.identity();
+        background = background.times(Mat4.translation(0,0,-30))
+            .times(Mat4.scale(100,100,0 ));
+
+        this.shapes.backdrop.draw(context, program_state, background, this.start_scene.end_of_game)
+
+        */
+
+
         if(this.brandnew){
             program_state.set_camera((Mat4.translation(0,0,-4)));
             this.Restart = false;
@@ -540,6 +588,8 @@ export class Big_Box_Push extends Simulation {
         }
 
 
+
+
         if(this.end_game){
             program_state.set_camera((Mat4.translation(0,0,-4)));
             if(this.loser == 2)
@@ -552,12 +602,15 @@ export class Big_Box_Push extends Simulation {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player2wins)
 
             }
+
             else
             {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
             }
 
         }
+
+
 
         if(this.Restart)
         {
@@ -568,6 +621,7 @@ export class Big_Box_Push extends Simulation {
             this.end_game = false;
             this.winner_decided = false;
             this.loser = 0;
+            this.notover = true;
         }
 
 
