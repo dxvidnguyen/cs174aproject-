@@ -343,7 +343,7 @@ export class Big_Box_Push extends Simulation {
         // update_state():  Override the base time-stepping code to say what this particular
         // scene should do to its bodies every frame -- including applying forces.
 
-        if(this.playgame){
+        
         
         // add initial bodies
         if(!this.added_bodies)
@@ -380,16 +380,17 @@ export class Big_Box_Push extends Simulation {
             }
             // if below bottom blast zone, respawn and end the game
             // Also, if someone preemptively chooses to restart, both boxes will respawn
-            if(b.center[1] < -40 || this.Restart)
+            if(b.center[1] < -40 || this.Restart || !this.playgame)
             {
                 b.center = this.spawn_points[i];
                 b.linear_velocity = vec3(0, -0.1, 0);
                 
-                if(!this.Restart)
+                if(!this.Restart && this.playgame)
                     {
                         this.end_game = true;
                         if(this.notover){
                             this.loser = i+1;
+                            this.notover = false;
                         }
 
                     }
@@ -507,8 +508,6 @@ export class Big_Box_Push extends Simulation {
             // a.angular_velocity = 0.1 * d_top.dot(vec3(0, 1, 0));
             // b.angular_velocity = 0.1 * b.spin_axis.dot(vec3(0, 1, 0));
         }
-
-    }
     }
 
     display(context, program_state) {
@@ -551,14 +550,11 @@ export class Big_Box_Push extends Simulation {
             if(this.loser == 2)
             {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player1wins)
-                this.notover = false;
-
 
             }
             else if(this.loser == 1)
             {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player2wins)
-                this.notover = false;
 
             }
 
