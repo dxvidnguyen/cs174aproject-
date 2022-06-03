@@ -243,6 +243,7 @@ export class Big_Box_Push extends Simulation {
         this.not_started = true;
         this.end_game = false;
         this.Restart = false;
+        this.notover = true;
 
 
     }
@@ -386,8 +387,11 @@ export class Big_Box_Push extends Simulation {
                 
                 if(!this.Restart)
                     {
-                        this.end_game = true;                    
-                        this.loser = i+1;
+                        this.end_game = true;
+                        if(this.notover){
+                            this.loser = i+1;
+                        }
+
                     }
             }
 
@@ -540,24 +544,32 @@ export class Big_Box_Push extends Simulation {
         }
 
 
+
+
         if(this.end_game){
             program_state.set_camera((Mat4.translation(0,0,-4)));
             if(this.loser == 2)
             {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player1wins)
+                this.notover = false;
+
 
             }
             else if(this.loser == 1)
             {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player2wins)
+                this.notover = false;
 
             }
+
             else
             {
                 this.shapes.cube.draw(context, program_state, start_box, this.start_scene.end_of_game)
             }
 
         }
+
+
 
         if(this.Restart)
         {
@@ -568,6 +580,7 @@ export class Big_Box_Push extends Simulation {
             this.end_game = false;
             this.winner_decided = false;
             this.loser = 0;
+            this.notover = true;
         }
 
 
