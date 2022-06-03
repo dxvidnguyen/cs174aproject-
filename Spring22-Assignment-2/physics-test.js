@@ -1,7 +1,7 @@
 import {defs, tiny} from './examples/common.js';
 
 // Pull these names into this module's scope for convenience:
-const {vec3, unsafe3, vec4, color, Mat4, Light, Shape, Material, Shader, Texture, Scene, hex_color} = tiny;
+const {Vector, vec3, unsafe3, vec4, color, Mat4, Light, Shape, Material, Shader, Texture, Scene, hex_color} = tiny;
 
 const {Cube, Axis_Arrows, Textured_Phong} = defs
 
@@ -156,6 +156,7 @@ export class Big_Box_Push extends Simulation {
         this.shapes = {
             cube:new defs.Cube(),
             backdrop: new defs.Cube(),
+            cube2: new Cube()
         };
         const shader = new defs.Fake_Bump_Map(5);
         this.material = new Material(shader, {
@@ -374,13 +375,24 @@ export class Big_Box_Push extends Simulation {
         this.shapes.cube.draw(context, program_state, background, this.start_scene.start)
              */
 
+            //adjusting the texture map for the arena
+            let op = 0.1;
 
+                        this.shapes.cube2.arrays.texture_coord = [
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,1), Vector.of(1,1),
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,1), Vector.of(1,1),
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,op), Vector.of(1,op),
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,op), Vector.of(1,op),
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,op), Vector.of(1,op),
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,op), Vector.of(1,op),
+                          Vector.of(0,0), Vector.of(1,0), Vector.of(0,op), Vector.of(1,op),
+                      ]
 
 
             //Adding Platform body
-            this.bodies.push(new Body(this.shapes.cube, this.start_scene.wood, vec3(20, 2, 20))
-
-                             .emplace(Mat4.translation(0, 0, 0), vec3(0, 1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+            this.bodies.push(new Body(this.shapes.cube2, this.start_scene.wood, vec3(20, 2, 20))
+                             .emplace(Mat4.translation(0, 0, 0), vec3(0, 1, 0).normalized().times(2), 0, vec3(0, 0, 1)));            
+            
             //Player bodies
             for (var i = 0; i < 2; i++){
                 this.bodies.push(new Body(this.shapes.cube, this.material.override({color: hex_color(this.box_colors[i])}), vec3(2, 2, 2))
@@ -389,7 +401,7 @@ export class Big_Box_Push extends Simulation {
 
             //Adding background
             this.bodies.push(new Body(this.shapes.cube, this.start_scene.backy, vec3(100, 100, 1))
-                .emplace(Mat4.translation(0, -15, -30), vec3(0, 0.1, 0), 0, vec3(0, 0, 0.000000000000000000000001)));
+                .emplace(Mat4.translation(0, -15, -50), vec3(0, 0.1, 0), 0, vec3(0, 0, 0.000000000000000000000001)));
 
             this.added_bodies = true;
         }
