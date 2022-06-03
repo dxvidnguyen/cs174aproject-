@@ -198,14 +198,14 @@ export class Big_Box_Push extends Simulation {
 
             backy: new Material(new Textured_Phong(), {
                 color: hex_color("#000000"),
-                ambient: 0.5,
-                texture: new Texture("assets/back.png", "NEAREST")
+                ambient: 1,
+                texture: new Texture("assets/Retro_Background.jpg", "NEAREST")
             }),
 
             wood: new Material(new Textured_Phong(), {
                 color: hex_color("#000000"),
-                ambient: 0.5,
-                texture: new Texture("assets/wooden.jpeg", "NEAREST")
+                ambient: 1,
+                texture: new Texture("assets/platform_texture.jpg", "NEAREST")
             }),
 
 
@@ -379,16 +379,17 @@ export class Big_Box_Push extends Simulation {
 
             //Adding Platform body
             this.bodies.push(new Body(this.shapes.cube, this.start_scene.wood, vec3(20, 2, 20))
-                             .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
+
+                             .emplace(Mat4.translation(0, 0, 0), vec3(0, 1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             //Player bodies
             for (var i = 0; i < 2; i++){
                 this.bodies.push(new Body(this.shapes.cube, this.material.override({color: hex_color(this.box_colors[i])}), vec3(2, 2, 2))
                     .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             }
 
-            //Adding Platform body
+            //Adding background
             this.bodies.push(new Body(this.shapes.cube, this.start_scene.backy, vec3(100, 100, 1))
-                .emplace(Mat4.translation(0, 0, -30), vec3(0, 0.1, 0), 0, vec3(0, 0, 0.000000000000000000000001)));
+                .emplace(Mat4.translation(0, -15, -30), vec3(0, 0.1, 0), 0, vec3(0, 0, 0.000000000000000000000001)));
 
             this.added_bodies = true;
         }
