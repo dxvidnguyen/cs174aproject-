@@ -153,7 +153,10 @@ export class Simulation extends Scene {
 export class Big_Box_Push extends Simulation {
     constructor() {
         super();
-        this.shapes = {cube:new defs.Cube()};
+        this.shapes = {
+            cube:new defs.Cube(),
+            backdrop: new defs.Cube(),
+        };
         const shader = new defs.Fake_Bump_Map(5);
         this.material = new Material(shader, {
             color:  hex_color("#83a832"),
@@ -162,8 +165,8 @@ export class Big_Box_Push extends Simulation {
         })
 
         this.scene_material = new Material(shader, {
-            color: hex_color("#ffffff"),
-            ambient: .2,
+            color: hex_color("#C4A484"),
+            ambient: 0.2,
             diffusivity: 0.4,
         }
             
@@ -192,6 +195,15 @@ export class Big_Box_Push extends Simulation {
                 ambient: 1,
                 texture: new Texture("assets/Game_Over_Player_2_Wins.jpg", "NEAREST")
             }),
+
+            backy: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 0.5,
+                texture: new Texture("assets/back.png", "NEAREST")
+            }),
+
+            
+
         }
 
 
@@ -348,6 +360,17 @@ export class Big_Box_Push extends Simulation {
         // add initial bodies
         if(!this.added_bodies)
         {
+            /*
+            let background = Mat4.identity();
+        background = background.times(Mat4.translation(0,0,-20))
+            .times(Mat4.scale(10,10,0 ));
+
+        this.shapes.cube.draw(context, program_state, background, this.start_scene.start)
+             */
+
+
+
+
             //Adding Platform body
             this.bodies.push(new Body(this.shapes.cube, this.scene_material, vec3(20, 2, 20))
                              .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
@@ -356,6 +379,10 @@ export class Big_Box_Push extends Simulation {
                 this.bodies.push(new Body(this.shapes.cube, this.material.override({color: hex_color(this.box_colors[i])}), vec3(2, 2, 2))
                     .emplace(Mat4.translation(-10 + 20* i, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             }
+
+            //Adding Platform body
+            this.bodies.push(new Body(this.shapes.cube, this.start_scene.backy, vec3(100, 100, 1))
+                .emplace(Mat4.translation(0, 0, -30), vec3(0, 0.1, 0), 0, vec3(0, 0, 0.000000000000000000000001)));
 
             this.added_bodies = true;
         }
@@ -522,7 +549,19 @@ export class Big_Box_Push extends Simulation {
        // let starter = Mat4.identity();
        // this.shapes.cube.draw(context, program_state, starter, this.material);
 
-        super.display(context, program_state);        
+        super.display(context, program_state);
+
+        /*
+
+        let background = Mat4.identity();
+        background = background.times(Mat4.translation(0,0,-30))
+            .times(Mat4.scale(100,100,0 ));
+
+        this.shapes.backdrop.draw(context, program_state, background, this.start_scene.end_of_game)
+
+        */
+
+
         if(this.brandnew){
             program_state.set_camera((Mat4.translation(0,0,-4)));
             this.Restart = false;
