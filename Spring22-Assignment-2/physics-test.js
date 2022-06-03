@@ -202,7 +202,13 @@ export class Big_Box_Push extends Simulation {
                 texture: new Texture("assets/back.png", "NEAREST")
             }),
 
-            
+            wood: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 0.5,
+                texture: new Texture("assets/wooden.jpeg", "NEAREST")
+            }),
+
+
 
         }
 
@@ -372,7 +378,7 @@ export class Big_Box_Push extends Simulation {
 
 
             //Adding Platform body
-            this.bodies.push(new Body(this.shapes.cube, this.scene_material, vec3(20, 2, 20))
+            this.bodies.push(new Body(this.shapes.cube, this.start_scene.wood, vec3(20, 2, 20))
                              .emplace(Mat4.translation(0, 0, 0), vec3(0, 0.1, 0).normalized().times(2), 0, vec3(0, 0, 1)));
             //Player bodies
             for (var i = 0; i < 2; i++){
