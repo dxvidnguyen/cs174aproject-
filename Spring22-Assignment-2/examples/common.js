@@ -926,6 +926,11 @@ const Movement_Controls = defs.Movement_Controls =
                 this.inverse().set(Mat4.look_at(vec3(-40, 0, 0), vec3(0, 0, 0), vec3(0, 1, 0)));
                 this.matrix().set(Mat4.inverse(this.inverse()));
             }, "#8B8885");
+            this.key_triggered_button("from top", ["5"], () => {
+                this.inverse().set(Mat4.look_at(vec3(0, 40, 0), vec3(0, 0, 0), vec3(0, 0, -1)));
+                //this.inverse().set(Mat4.rotation(90,90,90,1));
+                this.matrix().set(Mat4.inverse(this.inverse()));
+            }, "#8B8885");-
             this.new_line();
             this.key_triggered_button("Attach to global camera", ["Shift", "R"],
                 () => {
