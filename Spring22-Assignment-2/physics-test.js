@@ -544,11 +544,13 @@ export class Big_Box_Push extends Simulation {
             program_state.set_camera((Mat4.translation(0,0,-4)));
             if(this.loser == 2)
             {
-                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player1wins)                
+                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player1wins)
+
             }
             else if(this.loser == 1)
             {
-                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player2wins)                
+                this.shapes.cube.draw(context, program_state, start_box, this.start_scene.player2wins)
+
             }
             else
             {
