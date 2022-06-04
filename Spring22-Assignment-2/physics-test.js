@@ -635,6 +635,8 @@ export class Big_Box_Push extends Simulation {
             this.winner_decided = false;
             this.loser = 0;
             this.notover = true;
+
+            this.bodies[3].center[1] = -15;
         }
 
 
